@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/colors.dart';
+import 'package:music_player/model/myaudio.dart';
 import 'package:music_player/player_control.dart';
-
+import 'package:provider/provider.dart';
+import 'dart:async';
 import 'album_art.dart';
 import 'nav_bar.dart';
 
@@ -11,7 +13,9 @@ void main() {
     title: 'Music Player',
     theme: ThemeData(fontFamily: 'Circular'),
     debugShowCheckedModeBanner: false,
-    home: HomePage(),
+    home: ChangeNotifierProvider(
+        create: (_)=>MyAudio(),
+        child: HomePage()),
   ));
 }
 
@@ -25,7 +29,8 @@ class _HomePageState extends State<HomePage> {
 
 
   Map audioData = {
-    'url': 'https://www.mfiles.co.uk/mp3-downloads/beethoven-symphony7-2-liszt-piano.mp3',
+
+    'url':'https://www.mfiles.co.uk/mp3-downloads/beethoven-symphony7-2-liszt-piano.mp3'
   };
 
   @override
@@ -49,7 +54,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Text(
-            'Bethoven',
+            'Beethoven',
             style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w500,
@@ -68,17 +73,19 @@ class _HomePageState extends State<HomePage> {
               thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5),
 
             ),
-            child: Slider(
-              value: sliderValue,
-              activeColor: darkPrimaryColor,
-              inactiveColor: darkPrimaryColor.withOpacity(0.5),
-              onChanged: (value) {
-                setState(() {
-                  sliderValue = value;
-                });
-              },
-              min: 0,
-              max: 20,
+            child: Consumer<MyAudio>(
+              builder: (_,myAudioModel,child)=>
+              Slider(
+                value: myAudioModel.position==null? 0: myAudioModel.position!.inMilliseconds.toDouble(),
+                activeColor: darkPrimaryColor,
+                inactiveColor: darkPrimaryColor.withOpacity(0.5),
+                onChanged: (value) {
+                  myAudioModel.seekAudio(Duration(milliseconds: value.toInt()));
+
+                },
+                min: 0,
+                max: myAudioModel.totalDuration==null? 20: myAudioModel.totalDuration!.inMilliseconds.toDouble(),
+              ),
             ),
           ),
           PlayerControls(),
