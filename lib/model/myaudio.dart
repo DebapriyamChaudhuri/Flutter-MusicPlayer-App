@@ -48,8 +48,8 @@ class MyAudio extends ChangeNotifier{
   stopAudio(){
     audioPlayer.stop();
   }
-  seekAudio(Duration durationtoSeek){
-    audioPlayer.seek(durationtoSeek);
+  seekAudio(Duration durationToSeek){
+    audioPlayer.seek(durationToSeek);
 
   }
 
